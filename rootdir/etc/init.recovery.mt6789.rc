@@ -1,0 +1,31 @@
+# Recovery-mode init. Lands at the root of the recovery ramdisk, where init
+# picks it up as /init.recovery.${ro.hardware}.rc (ro.hardware = mt6789 from
+# the dtb cmdline).
+#
+# Without this the recovery ramdisk has no USB gadget configuration, so
+# `adb sideload` never enumerates.
+#
+# Derived from stock's copy in ADVAN_6781_S34NF2_V4.0_20250304 vendor_boot
+# (vendor_ramdisk00, zip-CRC-chained; sha256 d8fc8d253d7aa08d...), with three
+# removals, each a reference to something that does not exist here:
+#   * import /init.recovery.project.rc -- not in stock's vendor ramdisk.
+#   * `on boot` exec of /system/bin/mtk_plpath_utils (builds the legacy
+#     /dev/block/platform/... link tree) -- this build installs no such
+#     binary into recovery; everything here uses /dev/block/by-name, which
+#     ueventd creates.
+#   * `on late-init` exec of /vendor/bin/linkud in u:r:storage_turbo:s0
+#     (a Prize "storage turbo" addition) -- stock's vendor partition ships no
+#     linkud, and this tree's policy has no storage_turbo domain.
+# The first two are the same removals the S666LN tree made to its stock copy.
+
+on init
+    setprop sys.usb.configfs 1
+    setprop sys.usb.controller "musb-hdrc"
+    setprop sys.usb.ffs.aio_compat 0
+
+on fs && property:ro.debuggable=0
+    # Tell the charger whether USB is a CDP or an SDP port. Without this the
+    # port is treated as charging-only and waits for USB activation that
+    # never comes.
+    write /sys/class/udc/musb-hdrc/device/cmode 2
+    start adbd
