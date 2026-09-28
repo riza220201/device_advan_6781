@@ -1,0 +1,20 @@
+# Stock's vendor/etc/init/hw/init.mtkgki.rc (ADVAN_6781_S34NF2_V4.0_20250304,
+# zip-chained) plus ONE line: stdio_to_kmsg on insmod_sh.
+#
+# init.insmod.sh names every module that fails to load, and without this its
+# stdout goes to /dev/null -- which is how RS4 build 20 loaded 0 of 177
+# vendor_dlkm modules while leaving no record anywhere. init opens the fd; the
+# script writes through it in its own domain, so this needs
+# sepolicy/vendor/init_insmod_sh.te as well (kmsg_debug_device on MediaTek).
+service insmod_sh /vendor/bin/init.insmod.sh /vendor/etc/init.insmod.${ro.hardware}.cfg
+    class main
+    user root
+    group root system
+    disabled
+    oneshot
+    stdio_to_kmsg
+
+on early-init
+    setprop vendor.all.modules.ready 0
+    write /proc/bootprof "modprobe: Load_Module_START"
+    start insmod_sh

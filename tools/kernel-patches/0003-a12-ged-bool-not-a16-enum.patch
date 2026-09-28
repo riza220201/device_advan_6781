@@ -1,0 +1,91 @@
+--- .build/malibuild/gpu/gpu_mali/mali_avalon/a16w_jm/drivers/gpu/arm/midgard/platform/mt6789/mali_kbase_config_mt6789.c.orig-preged	2026-09-01 21:04:27.993437865 +0700
++++ .build/malibuild/gpu/gpu_mali/mali_avalon/a16w_jm/drivers/gpu/arm/midgard/platform/mt6789/mali_kbase_config_mt6789.c	2026-09-01 21:05:38.103811569 +0700
+@@ -37,6 +37,34 @@
+ #include <mboot_params.h>
+ #endif /* CONFIG_MTK_AEE_IPANIC */
+ 
++/* ------------------------------------------------------------------------
++ * 🔴 A12-ged COMPATIBILITY -- do not "simplify" back to the GED_* enum, and do
++ * NOT move this inside an #if: it was first placed after the last #include in
++ * the file, which sat inside
++ * #if IS_ENABLED(CONFIG_MALI_MTK_GPU_DVFS_HINT_26M_LOADING) -- not enabled --
++ * so both defines compiled out and the build failed with "undeclared
++ * identifier". Keep it at file scope.
++ *
++ * This kbase is built against A16 MTK headers, where
++ *     enum ged_gpu_power_state { GED_POWER_OFF=0, GED_SLEEP=1, GED_POWER_ON=2 };
++ * but the ged.ko on this device is A12, and its
++ * ged_dvfs_gpu_clock_switch_notify() gates on `tbz w0, #0` -- it takes a BOOL
++ * (bSwitchOn), exactly what stock's r32p1 kbase passes: 0 from
++ * pm_callback_power_off and 1 from pm_callback_power_on (both disassembled).
++ *
++ * Passing A16's GED_POWER_ON == 2 leaves bit 0 CLEAR, so ged takes its "off"
++ * branch, never reaches hrtimer_start_range_ns at ged.ko+0xdd28, never arms the
++ * DVFS timer whose callback is ged_sw_vsync_check_cb, and so never reaches
++ * ged_dvfs_run -- which has exactly ONE caller in the whole module. Net effect:
++ * the GPU stays at whatever OPP it powered on at, i.e. maximum.
++ *
++ * Measured on v3build6 (2026-09-01): 54 notify calls captured, values 0 and 2
++ * ONLY; ged_sw_vsync_check_cb 0 hits under load; GPU pinned at OPP index 0 of
++ * 38 while gpu_utilization read 87%.
++ * ------------------------------------------------------------------------ */
++#define RS4_GED_ON   1
++#define RS4_GED_OFF  0
++
+ #if IS_ENABLED(CONFIG_MALI_MIDGARD_DVFS) && \
+     IS_ENABLED(CONFIG_MALI_MTK_DVFS_POLICY) && \
+     IS_ENABLED(CONFIG_MALI_MTK_GPU_DVFS_HINT_26M_LOADING)
+@@ -115,7 +143,7 @@
+     if (!gpufreq_power_ctrl_enable()) {
+         mtk_common_pm_mfg_active();
+ #if IS_ENABLED(CONFIG_MALI_MIDGARD_DVFS) && IS_ENABLED(CONFIG_MALI_MTK_DVFS_POLICY)
+-        ged_dvfs_gpu_clock_switch_notify(GED_POWER_ON);
++        ged_dvfs_gpu_clock_switch_notify(RS4_GED_ON);
+ #endif
+         return 1;
+     }
+@@ -128,7 +156,7 @@
+     if (!mt_gpufreq_power_ctl_en()) {
+         mtk_common_pm_mfg_active();
+ #if IS_ENABLED(CONFIG_MALI_MIDGARD_DVFS) && IS_ENABLED(CONFIG_MALI_MTK_DVFS_POLICY)
+-        ged_dvfs_gpu_clock_switch_notify(GED_POWER_ON);
++        ged_dvfs_gpu_clock_switch_notify(RS4_GED_ON);
+ #endif
+         return 1;
+     }
+@@ -173,7 +201,7 @@
+     gpu_dvfs_status_footprint(GPU_DVFS_STATUS_STEP_4);
+ 
+ #if IS_ENABLED(CONFIG_MALI_MIDGARD_DVFS) && IS_ENABLED(CONFIG_MALI_MTK_DVFS_POLICY)
+-    ged_dvfs_gpu_clock_switch_notify(GED_POWER_ON);
++    ged_dvfs_gpu_clock_switch_notify(RS4_GED_ON);
+ #endif
+ 
+     gpu_dvfs_status_footprint(GPU_DVFS_STATUS_STEP_5);
+@@ -203,7 +231,7 @@
+     gpu_dvfs_status_footprint(GPU_DVFS_STATUS_STEP_6);
+ 
+ #if IS_ENABLED(CONFIG_MALI_MIDGARD_DVFS) && IS_ENABLED(CONFIG_MALI_MTK_DVFS_POLICY)
+-    ged_dvfs_gpu_clock_switch_notify(0);
++    ged_dvfs_gpu_clock_switch_notify(RS4_GED_OFF);
+ #endif
+ 
+     gpu_dvfs_status_footprint(GPU_DVFS_STATUS_STEP_7);
+@@ -335,7 +363,7 @@
+     kbdev->pm.runtime_active = true;
+ #endif
+ #if IS_ENABLED(CONFIG_MALI_MIDGARD_DVFS) && IS_ENABLED(CONFIG_MALI_MTK_DVFS_POLICY)
+-    ged_dvfs_gpu_clock_switch_notify(GED_POWER_ON);
++    ged_dvfs_gpu_clock_switch_notify(RS4_GED_ON);
+ #endif
+ 
+ #if IS_ENABLED(CONFIG_MALI_MTK_AUTOSUSPEND_DELAY)
+@@ -388,7 +416,7 @@
+ #endif /* CONFIG_MALI_MTK_ADAPTIVE_POWER_POLICY */
+ 
+ #if IS_ENABLED(CONFIG_MALI_MIDGARD_DVFS) && IS_ENABLED(CONFIG_MALI_MTK_DVFS_POLICY)
+-    ged_dvfs_gpu_clock_switch_notify(GED_SLEEP);
++    ged_dvfs_gpu_clock_switch_notify(RS4_GED_OFF);
+ #endif
+ 
+     spin_lock_irqsave(&kbdev->hwaccess_lock, flags);

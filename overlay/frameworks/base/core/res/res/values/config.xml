@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Copyright (C) 2026 The LineageOS Project
+  SPDX-License-Identifier: Apache-2.0
+
+  Static framework overlay. Values below are taken from ADVAN STOCK, not
+  from any running third-party ROM (a running device is a source of
+  hardware facts, never of framework config):
+    vendor/overlay/FrameworkResOverlay.apk + FrameworkResOverlayExt.apk
+    (ADVAN_6781_S34NF2_V4.0_20250304, decoded 2026-09-19 via aapt2).
+
+  DELIBERATELY NOT carried (each with a reason, so nobody re-adds them):
+  - config_pri_auto_brightness_* / config_pri_hbm_* (18 arrays): MTK-framework
+    names with no AOSP equivalent -- an overlay entry for an unknown resource
+    fails the build. The AOSP auto-brightness pair below covers the framework.
+  - rounded corners: stock sets none (no corner config in either RRO), so the
+    AOSP default applies. Do not invent a radius.
+  - xml/irq_device_map.xml: MTK-only name, same reason as pri_*.
+  - xml/power_profile.xml: staged separately (see below), not inlined here.
+
+  [C] refresh rates: stock declares defaultPeak 120 while the dtb panel
+  driver names a 60 Hz mode (Qnt36672e_fhdp_dsi_vdo_60hz). Both are recorded;
+  the tester gate (dumpsys display: advertised modes) decides whether 120 is
+  real or aspirational. An inherited-AOSP-default defect class lives exactly
+  here (RS4: 60 Hz clamp on a 120 Hz panel), so this is verified, not assumed.
+-->
+<resources>
+    <!-- Biometric sensors. AOSP ships this EMPTY with the answer in a
+         comment -- every device declares its own, or Settings hides
+         enrolment and dumpsys reports the wrong modality (RS4: modality 8
+         FACE with no fingerprint sensor at all). Stock: exactly one
+         fingerprint sensor, no face ("0:2:15"). Matches the Goodix GF3976. -->
+    <string-array name="config_biometric_sensors" translatable="false">
+        <item>0:2:15</item>
+    </string-array>
+
+    <!-- Cutout. Stock's own path + rect approximation (80x106). -->
+    <string name="config_mainBuiltInDisplayCutout" translatable="false">m0,26c-10.605,0 -20.786,4.217 -28.284,11.716c-7.499,7.498 -11.716,17.679 -11.716,28.284c0,10.605 4.217,20.786 11.716,28.284c7.498,7.499 17.679,11.716 28.284,11.716c10.605,0 20.786,-4.217 28.284,-11.716c7.499,-7.498 11.716,-17.679 11.716,-28.284c0,-10.605 -4.217,-20.786 -11.716,-28.284c-7.498,-7.499 -17.679,-11.716 -28.284,-11.716z</string>
+    <string name="config_mainBuiltInDisplayCutoutRectApproximation" translatable="false">m-40,0l80,0l0,106l-80,0l0,-106z</string>
+    <bool name="config_fillMainBuiltInDisplayCutout">true</bool>
+
+    <!-- Refresh rates. [C] -- see header. -->
+    <integer name="config_defaultPeakRefreshRate">120</integer>
+    <integer name="config_defaultRefreshRate">0</integer>
+
+    <!-- Brightness. Stock floats + integers, as declared. -->
+    <dimen name="config_screenBrightnessSettingDefaultFloat">0.4</dimen>
+    <dimen name="config_screenBrightnessSettingMaximumFloat">1.0</dimen>
+    <dimen name="config_screenBrightnessSettingMinimumFloat">0.05882</dimen>
+    <integer name="config_minDisplayBrightness">15</integer>
+    <integer name="config_screenBrightnessDoze">5</integer>
+    <bool name="config_automatic_brightness_available">true</bool>
+    <integer-array name="config_autoBrightnessLevels">
+        <item>2</item>
+        <item>15</item>
+        <item>33</item>
+        <item>50</item>
+        <item>757</item>
+        <item>1476</item>
+        <item>2179</item>
+        <item>2887</item>
+        <item>3587</item>
+        <item>4297</item>
+        <item>4995</item>
+        <item>5701</item>
+        <item>6412</item>
+        <item>7101</item>
+        <item>7805</item>
+        <item>9213</item>
+        <item>9937</item>
+        <item>10631</item>
+        <item>11332</item>
+        <item>12019</item>
+    </integer-array>
+    <integer-array name="config_autoBrightnessLcdBacklightValues">
+        <item>1</item>
+        <item>13</item>
+        <item>35</item>
+        <item>59</item>
+        <item>85</item>
+        <item>112</item>
+        <item>162</item>
+        <item>178</item>
+        <item>192</item>
+        <item>215</item>
+        <item>239</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+        <item>255</item>
+    </integer-array>
+
+    <!-- Telephony / UI. -->
+    <integer name="config_num_physical_slots">2</integer>
+    <bool name="config_showNavigationBar">true</bool>
+    <bool name="config_dozeAfterScreenOff">true</bool>
+    <bool name="config_powerDecoupleAutoSuspendModeFromDisplay">true</bool>
+    <bool name="config_powerDecoupleInteractiveModeFromDisplay">true</bool>
+    <bool name="config_supportsCamToggle">true</bool>
+    <bool name="config_supportsMicToggle">true</bool>
+    <integer name="config_shortPressOnPowerBehavior">1</integer>
+    <bool name="config_enableWifiDisplay">true</bool>
+    <bool name="config_suspendWhenScreenOffDueToProximity">true</bool>
+</resources>

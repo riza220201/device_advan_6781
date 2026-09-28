@@ -1,0 +1,26 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Vendor property contexts. Every entry verified against
+# device/mediatek/sepolicy_vndr (same branch) for conflicting claims.
+
+# ARM's EGL config table, read by libGLES_mali r54p1 in EVERY process that
+# touches EGL. Set in configs/properties/vendor.prop (39 keys, [C] values).
+# Unlabelled these fall to vendor_default_prop, which no app domain can
+# read -- the driver then sees them as unset and rebuilds a broken table,
+# and property-read refusals are dontaudit'd so no denial sweep can ever
+# catch it (only the functional EGL floor gate can).
+#
+# vendor_mtk_gpu_prop needs no new grant (attribute-mediated get_prop via
+# mtk_core_property_type, invisible to name greps). The prefix
+# ro.vendor.arm. matches Samsung's usage on the same SoC and also covers
+# ro.vendor.arm.gralloc.* keys. Corroboration, not conflict: Advan stock's
+# own vendor_property_contexts line 318 carries this exact prefix->type
+# mapping, so the built image agrees with stock about the label.
+#
+# This class cannot be live-tested here (contexts are read before
+# post-fs-data) -- it must be proven in a BUILD, then by the camera EGL
+# path on hardware.
+ro.vendor.arm.                              u:object_r:vendor_mtk_gpu_prop:s0

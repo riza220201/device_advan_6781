@@ -1,0 +1,9 @@
+# Python bytecode from tools/ (running the generators from this directory
+# leaves a __pycache__ behind).
+tools/__pycache__/
+
+# Built EGL/gralloc probes. Sources are tracked; the aarch64 binaries are not --
+# rebuild them with the NDK recipe in tools/egl-probe/README.
+tools/egl-probe/eglprobe
+tools/egl-probe/eglchoose
+tools/egl-probe/ahbprobe

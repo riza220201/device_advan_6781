@@ -1,0 +1,17 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Device-declared service types. CAUTION: names here must not collide with
+# differently-typed same names elsewhere -- on the RS4 tree,
+# goodix_fingerprint_service is a HWSERVICE type (hwservice_manager_type)
+# for vendor.goodix.* HIDL daemons. Here it is a SERVICEMANAGER type, as
+# Advan stock declares and uses it (vendor_service_contexts:
+# com.goodix.FingerprintService, add by system_app). Same name, different
+# manager, different attribute. If sepolicy_vndr ever declares either,
+# the duplicate fails the build loudly.
+
+# Goodix fingerprint service (servicemanager, published by system_app,
+# found by server/apps). Measured in stock vendor_sepolicy.cil.
+type goodix_fingerprint_service, service_manager_type;

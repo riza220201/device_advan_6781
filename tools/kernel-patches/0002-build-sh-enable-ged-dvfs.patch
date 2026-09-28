@@ -1,0 +1,12 @@
+--- /home/riza/itel-rs4-devicetree/.build/malibuild/build.sh.pre-dvfs	2026-09-01 08:46:32.933995310 +0700
++++ /home/riza/itel-rs4-devicetree/.build/malibuild/build.sh	2026-09-01 08:46:32.944796039 +0700
+@@ -28,7 +28,8 @@
+   CONFIG_MALI_MTK_MEMTRACK=y CONFIG_MALI_MTK_DEVFREQ_GOVERNOR=y \
+   CONFIG_MALI_MTK_DEVFREQ_THERMAL=y CONFIG_MALI_MTK_PROC_FS=y \
+   CONFIG_MALI_MTK_PREVENT_PRINTK_TOO_MUCH=y CONFIG_MALI_MTK_GPU_BM_2=y \
++  CONFIG_MTK_GPU_COMMON_DVFS_SUPPORT=y \
+   CONFIG_MALI_GATOR_SUPPORT=y CONFIG_MALI_BASE_MODULES=y \
+-  KCFLAGS="-Wno-macro-redefined -Wno-declaration-after-statement -DCONFIG_MTK_GPUFREQ_V2 -DCONFIG_MTK_GPU_LEGACY -DCONFIG_MALI_MTK_GPU_BM_2=1 -DCONFIG_MTK_TINYSYS_SSPM_SUPPORT=1 -I$DM/drivers/misc/mediatek/sspm/v3 -I$DM/drivers/gpu/mediatek/gpu_bm" \
++  KCFLAGS="-Wno-macro-redefined -Wno-declaration-after-statement -DCONFIG_MTK_GPUFREQ_V2 -DCONFIG_MTK_GPU_LEGACY -DCONFIG_MALI_MTK_GPU_BM_2=1 -DCONFIG_MTK_TINYSYS_SSPM_SUPPORT=1 -DCONFIG_MTK_GPU_COMMON_DVFS_SUPPORT=1 -DCONFIG_MALI_MIDGARD_DVFS=1 -I$DM/drivers/misc/mediatek/sspm/v3 -I$DM/drivers/gpu/mediatek/gpu_bm" \
+   KBUILD_EXTRA_SYMBOLS="/home/riza/itel-rs4-devicetree/.build/malibuild/vendor.symvers" -j"$(nproc)" modules
+ log "make rc=$?"

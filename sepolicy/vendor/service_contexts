@@ -1,0 +1,5 @@
+# Vendor service contexts. Taken from Advan stock's
+# vendor_service_contexts (the "drv modify goodix fingerprint" block,
+# 2026-09-19); sepolicy_vndr does not label this OEM service. If it ever
+# does, the duplicate fails the build loudly.
+com.goodix.FingerprintService    u:object_r:goodix_fingerprint_service:s0

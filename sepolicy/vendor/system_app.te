@@ -1,0 +1,21 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# system_app grants, measured from Advan stock's vendor_sepolicy.cil.
+# (Scope note: the domains below all exist on this branch; the `factory`
+# domain's rules are deliberately NOT reproduced -- its existence here is
+# unverified, and a denial will name it if it is needed).
+
+# Publishes com.goodix.FingerprintService (vendor_service_contexts).
+allow system_app goodix_fingerprint_service:service_manager { add find };
+
+# Prize battery/charger sysfs (voltage_now, current_now, charger_type,
+# bypass/factory controls) + glove-mode + factory nodes.
+allow system_app prize_sysfs_batteryinfo:file r_file_perms;
+allow system_app prize_sysfs_batteryinfo:dir search;
+allow system_app prize_glovemode_file:file r_file_perms;
+allow system_app prize_glovemode_file:dir search;
+allow system_app sysfs_prizefactory:file r_file_perms;
+allow system_app sysfs_prizefactory:dir search;

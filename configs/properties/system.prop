@@ -1,0 +1,48 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# /system/build.prop additions, wired up as TARGET_SYSTEM_PROP in
+# BoardConfig.mk.
+#
+# Deliberately short. Stock's /system/build.prop configures Advan/Prize's
+# own system apps and LineageOS sets dalvik/dexopt for itself; carrying
+# those would mean shipping configuration for software that is not in this
+# ROM. Only properties with a consumer that actually exists here are kept.
+
+# RIL. Read this before touching it.
+#
+# Stock sets NO vendor.rild.libpath. It ships exactly one RIL daemon and
+# passes the library on the command line instead:
+#
+#   mtkrild.rc:  service vendor.ril-daemon-mtk
+#                  /vendor/bin/hw/mtkfusionrild -l libmtk-ril.so
+#                (gated on vendor.ril.mtk=1; libmtk-ril.so exists in stock)
+#
+# There is no mtk-ril.so anywhere, and the value below is read by a daemon
+# stock does not ship: AOSP's `rild`, which arrives via the inherited
+# telephony product makefiles and resolves here to Cuttlefish's emulator
+# RIL. With this value pointing at a missing file, that rild dies at dlopen
+# every few seconds and never registers anything -- which is currently the
+# only thing stopping an emulator RIL from claiming IRadio ahead of the
+# real modem. Pointing it at libmtk-ril.so would run two RIL daemons
+# against one modem; deleting it lets Cuttlefish's rild fall back to its
+# own default and register a stub.
+#
+# The real fix is to stop shipping that module at all. Until then this line
+# is load-bearing by accident. (Stock passes no libargs, so none are kept.)
+vendor.rild.libpath=mtk-ril.so
+
+# Wi-Fi interface names. wlan0 matches what the driver creates
+# (wpa_supplicant.conf ctrl_interface + sap ap0 in vendor.prop, both
+# measured); p2p0/ap0 are the standard MTK names [C: tester confirms via
+# `ip link`].
+wifi.interface=wlan0
+wifi.direct.interface=p2p0
+wifi.tethering.interface=ap0
+
+# Retail name for About phone (operator judgement: target device is Advan
+# X1; stock carries no marketname key -- Advan is not Transsion, so there
+# is no tran.device.name equivalent).
+ro.product.marketname=Advan X1

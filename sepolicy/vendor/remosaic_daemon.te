@@ -1,0 +1,26 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# remosaic daemon (camera full-res path): a vndbinder daemon publishing
+# android.IRemosaicDaemon, consumed by mtk_hal_camera. All rules measured
+# from Advan stock's vendor_sepolicy.cil 2026-09-19. The domain, exec type
+# and service type are declared here because sepolicy_vndr does not declare
+# them (duplicate fails loudly at build if that changes).
+#
+# A vendor init service needs an exec type or init refuses it under
+# enforcing ("no domain transition from u:r:init:s0") -- the exec label is
+# in file_contexts, the entrypoint rule is below.
+
+type remosaic_daemon, domain;
+type remosaic_daemon_exec, exec_type, vendor_file_type, file_type;
+type remosaic_daemon_service, service_manager_type;
+
+init_daemon_domain(remosaic_daemon)
+vndbinder_use(remosaic_daemon)
+allow remosaic_daemon remosaic_daemon_exec:file { read getattr map execute open entrypoint };
+allow remosaic_daemon remosaic_daemon_service:service_manager add;
+allow remosaic_daemon mtk_hal_camera:binder transfer;
+allow remosaic_daemon mtk_hal_camera:fd use;
+allow mtk_hal_camera remosaic_daemon_service:service_manager find;

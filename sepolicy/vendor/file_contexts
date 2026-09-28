@@ -1,0 +1,45 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Vendor file contexts. Every entry is matched against the live device's
+# node list before it is trusted (an A/B device's by-name nodes are
+# slotted; a label for a path that does not exist silently matches
+# nothing). More entries land here in Phase 3, each with its measurement.
+
+# Character devices.
+/dev/ntsync                                                                     u:object_r:ntsync_device:s0
+
+# Mali r54p1 companion libraries -- same_process_hal_file, not vendor_file.
+#
+# The GPU user-mode stack is dlopen'd INTO app and surfaceflinger processes,
+# which may read/execute same_process_hal_file only. sepolicy_vndr labels
+# libraries one filename at a time, so anything r54p1 ADDS lands on the
+# vendor_file default and cannot load. Zero of these six match anything in
+# Advan stock's vendor_file_contexts (measured 2026-09-19) -- each needs its
+# own line; there is no wildcard to inherit. An overlay that works proves
+# the FILES; only the built image proves the labels.
+#
+# libc++_r54.so is r54p1's private A16 libc++, bound to libgpud alone;
+# libr54shim.so is ours (device/advan/6781/mali/).
+/vendor/lib(64)?/libmtk_mali_user\.so                                           u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libc\+\+_r54\.so                                               u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/libr54shim\.so                                                 u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/android\.hardware\.graphics\.allocator-V2-ndk\.so              u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/android\.hardware\.graphics\.common-V6-ndk\.so                 u:object_r:same_process_hal_file:s0
+/vendor/lib(64)?/vendor\.mediatek\.hardware\.graphics-V1-ndk\.so                u:object_r:same_process_hal_file:s0
+
+# remosaic daemon binary. Without an exec type init refuses the service
+# under enforcing ("no domain transition"). Stock label, taken as-is.
+/(vendor|system/vendor)/bin/remosaic_daemon                                          u:object_r:remosaic_daemon_exec:s0
+
+# Goodix fingerprint template/calibration store. Stock declares
+# goodix_data_file with HAL allows but labels NO path with it (measured:
+# zero file_contexts hits), so the grant can never fire there. This tree
+# labels the standard store path as vendor_goodix_data_file (declared in
+# file.te) instead. [C]: if enrolment denies on a different path, the
+# denial names it and the label moves -- tester gate is a real enrolment.
+# NOTE: /dev/goodix_fp is intentionally NOT listed here -- stock labels it
+# fingerprint_device (a platform type) and sepolicy_vndr covers it.
+/data/vendor/goodix(/.*)?                                                           u:object_r:vendor_goodix_data_file:s0

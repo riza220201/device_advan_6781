@@ -1,0 +1,38 @@
+# Mali r54p1 GPU userspace -- the donor-only libraries.
+#
+# NOT stock: none of these exist in ADVAN_6781_S34NF2_V4.0_20250304, which is
+# why tools/gen_proprietary_files.py (stock-only by rule) never lists them and
+# why extract-files.sh never extracts this list. They are PLACED in
+# vendor/advan/6781/proprietary/ from the r54p1 set (provenance and sha256s:
+# vendor/advan/6781/MANIFEST.md) and setup-makefiles.sh turns this list into
+# modules exactly as it does the stock one.
+#
+# The r54p1 UMD (egl/mt6789/libGLES_mali.so) and libgpud.so are NOT here:
+# they replace stock files at stock paths, so proprietary-files.txt already
+# lists them.
+#
+# Why each is needed (DT_NEEDED of the donor UMD / libgpud):
+#   libc++_r54            libgpud's private A16 libc++ (--set-soname)
+#   libmtk_mali_user      UMD
+#   graphics.common-V6    libgpud DIRECTLY -- the linker needs the NAMED file
+#                         even when the symbols resolve elsewhere (Knowledge
+#                         mali-driver-and-vulkan: symbol-closure check passed a
+#                         missing library)
+#   mediatek graphics-V1  UMD
+#
+# Deliberately absent: android.hardware.graphics.allocator-V2-ndk. On this
+# branch AIDL's unfrozen `current` IS V2, so soong generates four modules of
+# that name; a prebuilt would be a duplicate. device.mk requests the
+# platform's .vendor variant instead (same as the S666LN).
+#
+# Before 2026-09-29 nothing listed these: the files sat in the vendor tree,
+# referenced by no makefile, and would never have reached the image.
+
+-vendor/lib/android.hardware.graphics.common-V6-ndk.so
+-vendor/lib64/android.hardware.graphics.common-V6-ndk.so
+-vendor/lib/libc++_r54.so
+-vendor/lib64/libc++_r54.so
+-vendor/lib/libmtk_mali_user.so
+-vendor/lib64/libmtk_mali_user.so
+-vendor/lib/vendor.mediatek.hardware.graphics-V1-ndk.so
+-vendor/lib64/vendor.mediatek.hardware.graphics-V1-ndk.so

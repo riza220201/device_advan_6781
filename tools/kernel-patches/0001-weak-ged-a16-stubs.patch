@@ -1,0 +1,51 @@
+--- /home/riza/itel-rs4-devicetree/.build/malibuild/gpu/gpu_mali/mali_avalon/a16w_jm/drivers/gpu/arm/midgard/platform/mtk_platform_common/mtk_platform_dvfs.c.pre-weak	2026-09-01 08:49:27.160135213 +0700
++++ /home/riza/itel-rs4-devicetree/.build/malibuild/gpu/gpu_mali/mali_avalon/a16w_jm/drivers/gpu/arm/midgard/platform/mtk_platform_common/mtk_platform_dvfs.c	2026-09-01 08:55:28.281299795 +0700
+@@ -24,6 +24,48 @@
+ #include "platform/mtk_platform_common/mtk_platform_dvfs_hint_26m_perf_cnting_ex.h"
+ #endif /* CONFIG_MALI_MIDGARD_DVFS && CONFIG_MALI_MTK_DVFS_POLICY && CONFIG_MALI_MTK_GPU_DVFS_HINT_26M_LOADING*/
+ 
++/* itel RS4 (S666LN): A16 ged APIs that this device's A12-era ged.ko does not export.
++ *
++ * Enabling CONFIG_MTK_GPU_COMMON_DVFS_SUPPORT compiles this file, which is what
++ * registers the kbase's DVFS callbacks into ged -- without it
++ * ged_dvfs_cal_gpu_utilization_ex_fp and ged_dvfs_gpu_freq_commit_fp stay NULL,
++ * gpu_utilization reads 0% while rendering and the GPU never leaves the OPP it
++ * powered on at. Measured on v3, 2026-09-01, with ZZZ rendering at 46 fps.
++ *
++ * Doing so also drags in mtk_platform_common.c's thin wrappers around a NEWER ged
++ * than we have. Measured against our shipped ged.ko:
++ *   RESOLVES (the 7 that stock's own r32p1 kbase imports, so the core path is intact):
++ *     ged_dvfs_cal_gpu_utilization_ex_fp   ged_dvfs_gpu_freq_commit_fp
++ *     ged_dvfs_get_last_commit_idx         ged_dvfs_set_gpu_core_mask_fp
++ *     ged_dvfs_gpu_clock_switch_notify     ged_log_buf_alloc / _print2
++ *   MISSING: the 13 stubbed below, every one of them dual-GPU / stack-domain /
++ *   sysram bookkeeping for parts with separate top+stack power domains.
++ *   Mali-G57 MC2 has one domain and is not such a part.
++ *
++ * __weak so a ged that DOES export them wins at load time, exactly as the
++ * qos_get_frame_nr() stub in mali_kbase_core_linux.c does. The returns match what
++ * mtk_platform_common.c already returns when the feature is compiled out (-1), so
++ * the fallback path is one the vendor ships, not one invented here.
++ *
++ * 🔴 The two _fp POINTERS are assigned by mtk_dvfs_init() below. With a weak
++ * definition that assignment lands in OUR copy, which nothing else reads -- which
++ * is correct: they are the dual-commit path, and this GPU has one domain.
++ */
++__weak unsigned long ged_dvfs_get_last_commit_top_idx(void) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_get_last_commit_stack_idx(void) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_idx(void) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_idx_test(int commit_idx) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_top_idx(void) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_top_idx_test(int commit_idx) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_stack_idx(void) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_stack_idx_test(int commit_idx) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_dual(void) { return (unsigned long)-1; }
++__weak unsigned long ged_dvfs_write_sysram_last_commit_dual_test(int top_idx, int stack_idx) { return (unsigned long)-1; }
++__weak int ged_dvfs_update_step_size(int low_step, int med_step, int high_step) { return -1; }
++__weak void (*ged_dvfs_gpu_freq_dual_commit_fp)(unsigned long gpuNewFreqID,
++	unsigned long stackNewFreqID, int *pbCommited);
++__weak u64 (*mtk_get_system_timer_fp)(void);
++
+ #if IS_ENABLED(CONFIG_PROC_FS)
+ /* name of the proc entry */
+ #define	PROC_GPU_UTILIZATION "gpu_utilization"

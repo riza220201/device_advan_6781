@@ -1,0 +1,42 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Device-declared file types. Each exists because the hardware has a node
+# device/mediatek/sepolicy_vndr does not declare (same branch) -- verified
+# against Advan stock's vendor_sepolicy.cil, which declares and uses them.
+# If the branch ever declares one of these, the duplicate fails the build
+# loudly, which is the failure mode we want.
+
+# Prize (ODM) sysfs battery/charger nodes: voltage_now, current_now,
+# charger_type, bypass/factory_charge controls. Read by the health HAL and
+# system_server; without the type they land on generic sysfs, which those
+# domains may not read (the online-charging plug-blindness class).
+type prize_sysfs_batteryinfo, fs_type, sysfs_type;
+
+# Prize factory-test nodes (dcam/wireless/focaltech/factory_charger status).
+# Labelled so factory probing lands typed; grants are minimal (factory
+# domain's own rules are NOT reproduced -- its existence on this branch is
+# unverified, and referencing a missing domain fails the build).
+type sysfs_prizefactory, fs_type, sysfs_type;
+
+# Prize touch glove-mode state nodes (i2c/spi/bus variants + smartcover).
+type prize_glovemode_file, fs_type, sysfs_type;
+
+# Prize dual-camera nodes (2-0040/8-0040/8-006e/9-006e value/open/close/type).
+type prizedualcam_device, fs_type, sysfs_type;
+
+# Prize common nodes (supertorch, gesture) + OLED node + chip-status/fresh.
+type prize_common_node_file, fs_type, sysfs_type;
+type prize_oled_node_file, fs_type, sysfs_type;
+type prize_sysfs_chip_status, fs_type, sysfs_type;
+type prizefresh, fs_type, sysfs_type;
+
+# Goodix fingerprint template/calibration store. Stock declares
+# goodix_data_file with HAL allows but labels NO path with it (measured:
+# zero file_contexts hits), so on stock the grant can never fire. This
+# tree labels the standard store path and grants the HAL -- if enrolment
+# denies on a different path, the denial names it and the label moves.
+# Tester gate: enroll a fingerprint, then a denial sweep.
+type vendor_goodix_data_file, file_type, data_file_type;

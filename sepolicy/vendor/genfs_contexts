@@ -1,0 +1,69 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# genfs labels for Prize (ODM) sysfs nodes, taken from Advan stock's compiled
+# vendor_sepolicy.cil (59 entries, 2026-09-19). Types are declared in file.te.
+# A label with no grant is inert and safe; a grant without a label can never
+# fire. Grants live in the per-domain files, measured from the same .cil.
+#
+genfscon sysfs /devices/platform/11007000.i2c0/i2c-0/0-002e/state u:object_r:prize_glovemode_file:s0
+genfscon sysfs /devices/platform/11007000.i2c0/i2c-0/0-0038/state u:object_r:prize_glovemode_file:s0
+genfscon sysfs /devices/platform/11007000.i2c0/i2c-0/0-005d/state u:object_r:prize_glovemode_file:s0
+genfscon sysfs /devices/platform/bus/1100a000.i2c/i2c-1/1-0038/state u:object_r:prize_glovemode_file:s0
+genfscon sysfs /devices/platform/common_node/gesture u:object_r:prize_common_node_file:s0
+genfscon sysfs /devices/platform/common_node/supertorch u:object_r:prize_common_node_file:s0
+genfscon sysfs /devices/platform/oled_node/oled u:object_r:prize_oled_node_file:s0
+genfscon sysfs /devices/platform/soc/11015000.i2c/i2c-3/3-002b/wireless_connect u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /devices/platform/soc/11eb0000.i2c/i2c-2/2-0040/close u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb0000.i2c/i2c-2/2-0040/open u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb0000.i2c/i2c-2/2-0040/type u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb0000.i2c/i2c-2/2-0040/value u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-0040/close u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-0040/open u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-0040/type u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-0040/value u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-006e/close u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-006e/open u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-006e/type u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb2000.i2c/i2c-8/8-006e/value u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb3000.i2c/i2c-9/9-006e/close u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb3000.i2c/i2c-9/9-006e/open u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb3000.i2c/i2c-9/9-006e/type u:object_r:prizedualcam_device:s0
+genfscon sysfs /devices/platform/soc/11eb3000.i2c/i2c-9/9-006e/value u:object_r:prizedualcam_device:s0
+genfscon sysfs /kernel/prize/smartcover/common_node/state u:object_r:prize_glovemode_file:s0
+genfscon sysfs /sys/class/factory_charger/charger_algo u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/charger_type u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/chg2_exist u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/cmd_bypass_charge u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/cmd_charge_disable u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/cmd_charge_power_limit u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/fast_charger u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/fast_charger_enable u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/fast_charger_pwr u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/class/factory_charger/fast_charger_support u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/devices/platform/11cb0000.i2c3/i2c-3/3-002b/private_protocol_state u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/devices/platform/battery/charger_type u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/devices/platform/battery/charging_current_value u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/devices/platform/battery/multibat_capacity u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/devices/platform/battery/power_supply/battery/current_now u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/devices/platform/battery/reverse_charger u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/devices/platform/charger/chg2_exist u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/devices/platform/charger/chg3_exist u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/devices/platform/charger/power_conversion u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/devices/platform/soc/11e00000.i2c/i2c-0/0-0064/power_supply/cw-bat/current_now u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/devices/platform/soc/11e00000.i2c/i2c-0/0-0064/power_supply/cw-bat/voltage_now u:object_r:prize_sysfs_batteryinfo:s0
+genfscon sysfs /sys/focaltech_finger/chip_status u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_f_close u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_f_open u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_f_value u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_r1_close u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_r1_open u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_r1_value u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_r_close u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_r_open u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/dcam/dcam_r_value u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/wirelessrx/crcvalue u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/wirelessrx/fw_update u:object_r:sysfs_prizefactory:s0
+genfscon sysfs /sys/kernel/wirelessrx/fw_ver u:object_r:sysfs_prizefactory:s0

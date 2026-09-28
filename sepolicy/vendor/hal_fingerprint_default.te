@@ -1,0 +1,14 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+
+# Goodix template/calibration store. Stock grants hal_fingerprint_default
+# goodix_data_file create rights but labels no path with it (measured),
+# so the grant can never fire there. This tree labels /data/vendor/goodix
+# (the standard Goodix store path) as vendor_goodix_data_file (file.te,
+# file_contexts) and grants the HAL. Tester gate: enroll prints; a denial
+# names the real path if this one is wrong, and the label moves.
+allow hal_fingerprint_default vendor_goodix_data_file:dir create_dir_perms;
+allow hal_fingerprint_default vendor_goodix_data_file:file create_file_perms;

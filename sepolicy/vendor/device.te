@@ -1,0 +1,14 @@
+#
+# Copyright (C) 2026 The LineageOS Project
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Device-declared types. A type lives here (rather than relying on the SoC
+# vendor's policy) when the hardware has something
+# device/mediatek/sepolicy_vndr does not declare. Every entry names its
+# reason; a label with no consumer is a defect, not hygiene.
+
+# /dev/ntsync (CONFIG_NTSYNC). Its own type so apps can be granted access
+# without widening anything else -- the app neverallows are per-type, naming
+# specific device types rather than dev_type as a whole.
+type ntsync_device, dev_type;

@@ -1,0 +1,7 @@
+# Vendor VND-service contexts. The remosaic line is taken from Advan
+# stock's vndservice_contexts (2026-09-19); without it the daemon's
+# android.IRemosaicDaemon falls to default_android_vndservice and the add
+# is refused with no avc record -- the RS4 pnpmgr lesson (a service running
+# is not a service serving: gate on vndservice list output, not the daemon).
+# manager/* lines come from the platform; they are not duplicated here.
+android.IRemosaicDaemon u:object_r:remosaic_daemon_service:s0
