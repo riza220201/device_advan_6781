@@ -130,7 +130,7 @@ lines = [
     "    make the device non-compliant. check_vintf at the end of the build is",
     "    the verifier.",
     "-->",
-    '<compatibility-matrix version="2.0" type="framework">',
+    '<compatibility-matrix version="1.0" type="framework">',
 ]
 for (fmt, name, ver), itfs in sorted(groups.items()):
     lines.append('    <hal format="%s" optional="true">' % fmt)

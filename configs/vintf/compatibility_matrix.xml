@@ -27,10 +27,18 @@
         <name>android.system.wifi.keystore</name>
         <version>1.0</version>
     </hal>
-    <vendor-ndk>
-        <version>31</version>
-    </vendor-ndk>
-    <system-sdk>
-        <version>31</version>
-    </system-sdk>
+    <!--
+        No hard-coded <vendor-ndk> or <system-sdk>. Stock pins both to 31: its
+        vendor is sdk 31 / vndk 31. This ROM builds its own vendor modules at
+        BOARD_VNDK_VERSION 33 (lineage-20.0); stock's v31 blobs are served by
+        the vndk31 snapshot instead (see the VNDK note in device.mk).
+
+        Hard-coding them is fatal, not merely stale (build x, 2026-09-29; the
+        S666LN tree hit the identical error):
+          Hard-coded <vendor-ndk> version in device compatibility matrix, '31',
+          does not match value inferred from BOARD_VNDK_VERSION '33'
+        assemble_vintf fills both in from BOARD_VNDK_VERSION and
+        BOARD_SYSTEMSDK_VERSIONS when they are absent, so this file cannot
+        drift from what is actually being built.
+    -->
 </compatibility-matrix>

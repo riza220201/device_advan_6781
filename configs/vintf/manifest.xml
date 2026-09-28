@@ -543,8 +543,18 @@
         </interface>
         <fqname>@1.0::ITui/default</fqname>
     </hal>
-    <sepolicy>
-        <version>31.0</version>
-    </sepolicy>
+    <!--
+        No <sepolicy><version>. Stock declares 31.0: the sepolicy Advan's
+        vendor was compiled against. This ROM builds its vendor sepolicy from
+        source (BOARD_VENDOR_SEPOLICY_DIRS + sepolicy_vndr) against the
+        lineage-20.0 platform, i.e. BOARD_SEPOLICY_VERS 33.0, so stock's number
+        describes someone else's build.
+
+        Hard-coding it is fatal, not merely stale (build x, 2026-09-29; the
+        S666LN tree hit the identical error):
+          Cannot override existing value 31.0 with BOARD_SEPOLICY_VERS (which is 33.0)
+        Left out, assemble_vintf writes BOARD_SEPOLICY_VERS itself, so this
+        file cannot drift from the sepolicy actually being built.
+    -->
     <kernel target-level="6"/>
 </manifest>
