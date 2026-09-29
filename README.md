@@ -36,22 +36,37 @@ mali/        r54p1 integration (staged with the driver work, not before)
 prebuilts/   v31 snapshot + misc (staged Phase 2)
 ```
 
-The prebuilt kernel image, dtb, dtbo and the vendor_dlkm/first-stage modules
-live in a separate repo, `device/advan/6781-kernel`. Proprietary blobs live in
-`vendor/advan/6781` and are produced by `extract-files.sh`.
+The dtb, dtbo and the vendor_dlkm/first-stage modules live in a separate
+repo, `device/advan/6781-kernel`. The kernel image itself is NOT in any of
+these repos: it is itel-rs4-kernel's vanilla variant (the S666LN's kernel),
+imported into `device/advan/6781-kernel/prebuilt/` by `import-kernel.sh`.
+Proprietary blobs live in `vendor/advan/6781` and are produced by
+`extract-files.sh` (plus the placed r54p1 set, `proprietary-files-r54p1.txt`).
 
-## Building (once Phases 2-3 land)
+## Building
 
 ```
-repo init -u <manifest> -b <branch>
+repo init -u <crDroid 13.0 manifest> -b 13.0
 cp device/advan/6781/6781.xml .repo/local_manifests/    # or fetch it first
 repo sync
+# the kernel: build itel-rs4-kernel's vanilla variant, then import it
+#   (cd ~/itel-rs4-kernel && ./build.sh vanilla)
+device/advan/6781/import-kernel.sh vanilla      # KMI-gated; required
 . build/envsetup.sh
 lunch lineage_6781-userdebug
 mka bacon
 ```
 
-Tested against crDroid 13.0 (target). Two gates run inside the build. The
+Hosts without ncurses 5 (Debian 13, recent Ubuntu): RenderScript's 2016
+clang and the build-produced `bcc_strip_attr` need `libncurses.so.5` /
+`libtinfo.so.5`, and soong scrubs `LD_LIBRARY_PATH`. Either install the
+distro's ncurses5 packages or symlink the `.so.6` libraries as `.so.5` into
+`prebuilts/clang/host/linux-x86/clang-3289846/lib64` and
+`$OUT_DIR/host/linux-x86/lib64` (the second only exists once the build has
+produced it -- re-run after the first failure there).
+
+Target: crDroid 13.0. Status (2026-09-29): the product parses and compiles;
+no build has completed yet and it has never booted. Two gates run inside the build. The
 **KMI gate** confirms all 358 prebuilt vendor modules (180 vendor_dlkm +
 178 first-stage) against the shipped kernel. The **vendor dependency gate**
 resolves every DT_NEEDED in the built vendor image, per ABI, and checks the

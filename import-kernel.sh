@@ -4,13 +4,10 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 #
-# OPTIONAL: ship a kernel built by the separate custom-kernel project instead of
-# the GKI source this tree compiles by default.
+# REQUIRED: import the kernel this device ships. There is no from-source
+# kernel build in this tree (BoardConfig.mk errors out without an import).
 #
-# WHY TWO KERNELS EXIST, AND WHY THEY MUST STAY SEPARATE
-#   kernel/advan/6781   plain GKI android12-5.10-lts 5.10.260 + 6781_defconfig.
-#                        What this tree builds by default, and what anyone who
-#                        clones it reproduces byte for byte.
+# WHERE THE KERNEL COMES FROM
 #   itel-rs4-kernel     the custom kernel project, VANILLA variant (BORE,
 #                        NTSYNC, reflex and the rs4 set, no root). Those
 #                        patches belong ONLY there. This device ships the same
@@ -19,11 +16,12 @@
 #                        config (15-line diff, all GKI-drop drift) and share
 #                        module_layout 0x7c24b32d. /mnt/external_nvme/Advan-Kernel
 #                        was a stale local fork of it and is retired.
-#
-#   Do not "fix" the GKI fork by committing those patches into it. The defconfig
-#   in the fork does list CONFIG_SCHED_BORE and CONFIG_NTSYNC; Kconfig discards
-#   both silently when the source lacks them, so a from-source build here is a
-#   kernel without those features, not a broken one.
+#   kernel/advan/6781   NOT a kernel this tree builds (an earlier revision of
+#                        this header claimed "plain GKI + 6781_defconfig"; no
+#                        such defconfig has ever existed). It is only the
+#                        source lineage's generated_kernel_includes reads for
+#                        UAPI headers: a symlink to ~/itel-rs4-kernel/common,
+#                        the source of the imported Image.
 #
 # WHAT THIS IMPORTS
 #   Image.gz          the kernel itself
@@ -38,7 +36,8 @@
 # not 0x7c24b32d, or which disagrees on any symbol CRC, is rejected here rather
 # than at flash time.
 #
-# To go back to the in-tree source build, delete the prebuilt directory.
+# There is no in-tree source build to go back to: without prebuilt/ the
+# BoardConfig refuses to build.
 
 set -e
 
@@ -107,5 +106,4 @@ cp -f "${SRC}/vmlinux.symvers" "${DEST}/vmlinux.symvers"
 echo
 echo "Imported to ${DEST}"
 echo "  BoardConfig.mk picks this up automatically (TARGET_FORCE_PREBUILT_KERNEL)."
-echo "  The ROM will now ship this kernel instead of building kernel/advan/6781."
-echo "  Delete ${DEST} to go back to the source build."
+echo "  The ROM ships exactly this kernel; there is no source-build fallback."
