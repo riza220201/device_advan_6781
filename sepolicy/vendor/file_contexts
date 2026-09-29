@@ -42,3 +42,12 @@
 # NOTE: /dev/goodix_fp is intentionally NOT listed here -- stock labels it
 # fingerprint_device (a platform type) and sepolicy_vndr covers it.
 /data/vendor/goodix(/.*)?                                                           u:object_r:vendor_goodix_data_file:s0
+
+# The renamed -stock HAL binaries (gen_proprietary_files.py RENAME_BLOBS: the
+# platform defines both original module names unconditionally). A path rule
+# follows the NAME, so the rename left both unlabelled -- init refuses a
+# service with no exec type, and Wi-Fi / vibration would be silently absent
+# (vendor-deps gate, build ad). Same labels as the original names carry
+# (system/sepolicy + sepolicy_vndr); the S666LN labels its copies identically.
+/(vendor|system/vendor)/bin/hw/android\.hardware\.wifi@1\.0-service-stock            u:object_r:hal_wifi_default_exec:s0
+/(vendor|system/vendor)/bin/hw/android\.hardware\.vibrator-service\.mediatek-stock   u:object_r:hal_vibrator_default_exec:s0

@@ -73,6 +73,15 @@ excl |= {
 FROM_SOURCE = (
     "android.hardware.health@2.1", "android.hardware.health@2.0-impl-2.1",
     "vndservicemanager", "vndservice",
+    # AOSP's Bluetooth audio HAL (device.mk requests it). Stock's copy is
+    # MediaTek's build: it polls the MTK session registry while this ROM's
+    # AOSP Bluetooth stack writes the AOSP one, so a connected headset leaves
+    # audio on the speaker (the S666LN's measured bug). Listing the stock blob
+    # SHADOWED the source module, so the swap device.mk describes never
+    # happened -- and libbluetooth_audio_session, which only arrives as the
+    # AOSP HAL's dependency, was missing for the stock @2.0/@2.1 -impl
+    # providers (vendor-deps gate, build ad: 4 consumers, both ABIs).
+    "audio.bluetooth.default",
 )
 # Platform base_vendor.mk components that stock also ships as its own copies.
 # Soong writes an install rule for every module whether requested or not, so
@@ -312,6 +321,30 @@ C2_STOCK_LIBS = (
 for _lib in C2_STOCK_LIBS:
     RENAME_BLOBS["lib64/%s.so" % _lib] = "lib64/%s-stock.so" % _lib
 DROP_C2_32 = {"lib/%s.so" % _lib for _lib in C2_STOCK_LIBS}
+# ...and the rest of the 32-bit C2 stack with them. The tree runs the 64-bit
+# service (blob_fixup repoints stock's rc to -mediatek-64b; the built image's
+# rc was read back and says so), so stock's 32-bit service is never started
+# and a 64-bit process cannot load 32-bit libraries. With the 32-bit core set
+# above gone, these 11 were left shipping with 30 unresolved DT_NEEDED
+# references (vendor-deps gate, build ad). Closure measured on the built image:
+# exactly these 11, and 0 32-bit consumers outside them. The S666LN ships none.
+DROP_C2_32 |= {
+    "bin/hw/android.hardware.media.c2@1.2-mediatek",
+    "lib/libcodec2_mtk_c2store.so", "lib/libcodec2_mtk_vdec.so",
+    "lib/libcodec2_mtk_venc.so",
+    "lib/libcodec2_soft_mtk_alacdec.so", "lib/libcodec2_soft_mtk_apedec.so",
+    "lib/libcodec2_soft_mtk_imaadpcmdec.so", "lib/libcodec2_soft_mtk_mp3dec.so",
+    "lib/libcodec2_soft_mtk_msadpcmdec.so",
+    "lib/libcodec2_vpp_qt_plugin.so", "lib/libcodec2_vpp_rs_plugin.so",
+}
+# Stock's recovery-from-boot patcher, dead on stock too: vendor_flash_recovery.rc
+# starts /vendor/bin/install-recovery.sh, which stock's vendor does not contain,
+# and applypatch -- whose only purpose is that script, and which nothing else
+# invokes -- was this image's only libz_stable consumer (gate, build ad). There
+# is no recovery partition to patch here either: recovery rides in vendor_boot.
+DROP_DEAD_RECOVERY = {
+    "etc/init/vendor_flash_recovery.rc", "bin/applypatch",
+}
 
 
 def skip(rel):
@@ -328,7 +361,7 @@ def skip(rel):
 # --- walk the partition -------------------------------------------------------
 files = []
 stats = {"owned": 0, "from-source": 0, "generated": 0, "toybox": 0,
-         "dropped": 0, "dropped-cascade": 0, "dropped-songbuilt": 0, "dropped-sourced": 0, "dropped-ril": 0, "dropped-aosp": 0, "dropped-cas32": 0, "dropped-basevendor": 0, "dropped-c2-32": 0, "dropped-shell": 0, "dropped-vendorset": 0, "renamed": 0,
+         "dropped": 0, "dropped-cascade": 0, "dropped-songbuilt": 0, "dropped-sourced": 0, "dropped-ril": 0, "dropped-aosp": 0, "dropped-cas32": 0, "dropped-basevendor": 0, "dropped-c2-32": 0, "dropped-deadrecovery": 0, "dropped-shell": 0, "dropped-vendorset": 0, "renamed": 0,
          "dangling": 0, "links-skipped": 0}
 for root, dirs, fnames in os.walk(V):
     dirs[:] = [d for d in dirs if d != "lost+found"]
@@ -377,6 +410,9 @@ for rel in sorted(files):
         continue
     if rel in DROP_C2_32:
         stats["dropped-c2-32"] += 1
+        continue
+    if rel in DROP_DEAD_RECOVERY:
+        stats["dropped-deadrecovery"] += 1
         continue
     # Renames bypass everything below: a -stock blob is a DIFFERENT module
     # name by construction, so neither the vendorset rule nor anything else

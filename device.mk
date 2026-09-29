@@ -258,7 +258,18 @@ PRODUCT_PACKAGES += \
 #   memtrack                          <- memtrack-service.mediatek
 #   vibrator                          <- vibrator-service.mediatek (V2)
 #   keystore2                         <- libkeystore-engine-wifi-hidl.so
+#   common-V2 + keymaster-V3          <- vendor.bst...face.jdm-service and
+#                                        biometrics.face-V1-ndk_platform.so
+#                                        (Advan's face unlock HAL)
+#   light-V1                          <- bin/factory (factory-mode binary)
+# The last three were flagged by the vendor-deps gate (build ad): their
+# -vndk31 copies install to /vendor/lib64/vndk/, which a default-namespace
+# consumer never searches under the v33 allowlist. All three compat modules
+# measured present in hardware/lineage/compat (2026-09-29).
 PRODUCT_PACKAGES += \
+    android.hardware.common-V2-ndk_platform.vendor \
+    android.hardware.keymaster-V3-ndk_platform.vendor \
+    android.hardware.light-V1-ndk_platform.vendor \
     android.hardware.memtrack-V1-ndk_platform.vendor \
     android.hardware.security.keymint-V1-ndk_platform.vendor \
     android.hardware.security.secureclock-V1-ndk_platform.vendor \

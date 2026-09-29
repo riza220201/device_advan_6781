@@ -58,7 +58,6 @@ vendor/app/mcRegistry/e97c270ea5c44c58bcd3384a2fa2539e.tabin
 -vendor/bin/aee_aedv64_v2
 -vendor/bin/aee_dumpstatev_v2
 -vendor/bin/aeev_v2
--vendor/bin/applypatch
 -vendor/bin/atcid
 -vendor/bin/audiocmdservice_atci
 -vendor/bin/autobt
@@ -99,7 +98,6 @@ vendor/app/mcRegistry/e97c270ea5c44c58bcd3384a2fa2539e.tabin
 -vendor/bin/hw/android.hardware.graphics.composer@2.3-service
 -vendor/bin/hw/android.hardware.graphics.composer@2.4-service
 -vendor/bin/hw/android.hardware.lights-service.mediatek
--vendor/bin/hw/android.hardware.media.c2@1.2-mediatek
 -vendor/bin/hw/android.hardware.media.c2@1.2-mediatek-64b
 -vendor/bin/hw/android.hardware.memtrack-service.mediatek
 -vendor/bin/hw/android.hardware.neuralnetworks-shim-service-mtk
@@ -466,7 +464,6 @@ vendor/etc/init/vendor.mediatek.hardware.nvram@1.1-sevice.rc
 vendor/etc/init/vendor.mediatek.hardware.nwk_opt@1.0-service.rc
 vendor/etc/init/vendor.mediatek.hardware.pq@2.2-service.rc
 vendor/etc/init/vendor.trustonic.tee@1.1-service.rc
-vendor/etc/init/vendor_flash_recovery.rc
 vendor/etc/init/vibrator-mtk-default.rc
 vendor/etc/init/volte_clientapi_ua.rc
 vendor/etc/init/wifimacaddr.rc
@@ -781,7 +778,6 @@ vendor/lib/egl/egl.cfg
 -vendor/lib/hw/android.hardware.soundtrigger@2.3-impl.so
 -vendor/lib/hw/android.hardware.thermal@1.0-impl.so
 -vendor/lib/hw/android.hardware.thermal@2.0-impl.so
--vendor/lib/hw/audio.bluetooth.default.so
 -vendor/lib/hw/audio.primary.default.so
 -vendor/lib/hw/audio.primary.mediatek.so
 -vendor/lib/hw/audio.r_submix.default.so
@@ -886,16 +882,6 @@ vendor/lib/egl/egl.cfg
 -vendor/lib/libcharon-ss.so
 -vendor/lib/libcmdl.so
 -vendor/lib/libcmdl_ndk.mtk.vndk.so
--vendor/lib/libcodec2_mtk_c2store.so
--vendor/lib/libcodec2_mtk_vdec.so
--vendor/lib/libcodec2_mtk_venc.so
--vendor/lib/libcodec2_soft_mtk_alacdec.so
--vendor/lib/libcodec2_soft_mtk_apedec.so
--vendor/lib/libcodec2_soft_mtk_imaadpcmdec.so
--vendor/lib/libcodec2_soft_mtk_mp3dec.so
--vendor/lib/libcodec2_soft_mtk_msadpcmdec.so
--vendor/lib/libcodec2_vpp_qt_plugin.so
--vendor/lib/libcodec2_vpp_rs_plugin.so
 -vendor/lib/libconnfem.so
 -vendor/lib/libcrypto-md.so
 -vendor/lib/libcs_cs35l45_intf.so
@@ -1247,7 +1233,6 @@ vendor/lib/egl/egl.cfg
 -vendor/lib64/hw/android.hardware.soundtrigger@2.3-impl.so
 -vendor/lib64/hw/android.hardware.thermal@1.0-impl.so
 -vendor/lib64/hw/android.hardware.thermal@2.0-impl.so
--vendor/lib64/hw/audio.bluetooth.default.so
 -vendor/lib64/hw/audio.primary.default.so
 -vendor/lib64/hw/audio.primary.mediatek.so
 -vendor/lib64/hw/audio.r_submix.default.so

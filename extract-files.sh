@@ -84,8 +84,10 @@ fi
 #       question; vendor-deps gate + HAL restart count decide)
 #   the A12 codec2 set (which generation the C2 stack pins to -- device.mk
 #       deliberately requests neither generation yet)
-#   biometrics.common/face/common-V2/keymaster-V3 (face jdm-service refs;
-#       compat-shim vs v31-snapshot routing per library)
+#   (RESOLVED 2026-09-29: biometrics face jdm-service's common-V2 /
+#   keymaster-V3 _platform refs -> hardware/lineage/compat forwarding
+#   libraries requested in device.mk, after the vendor-deps gate flagged
+#   the -vndk31 copies as unreachable from the default namespace.)
 # Stock's Android-12 codec2 set, shipped alongside the platform's Android-13
 # one. Under a v31 vendor namespace the MTK C2 HAL needs A12 partners (the
 # platform's copies crash-loop it on v33-only symbols), but these are AOSP
@@ -221,7 +223,11 @@ function blob_fixup() {
             "${PATCHELF}" --replace-needed "libeffectsconfig.so" \
                 "libeffectsconfig-stock.so" "${2}"
             ;;
-        vendor/lib64/hw/android.hardware.boot@1.0-impl-1.2-mtkimpl.so)
+        vendor/lib64/hw/android.hardware.boot@1.0-impl-1.2-mtkimpl-stock.so)
+            # blob_fixup keys on the DESTINATION path, and this impl is itself
+            # renamed -stock. The case used to name the pre-rename file, so it
+            # never matched and the impl shipped still needing libmtk_bsg.so
+            # (vendor-deps gate, build ad; the only dead pattern of 38 -- audited).
             # libmtk_bsg ships -stock for the usual reason: hardware/mediatek
             # defines that module name in its own soong namespace, so nothing
             # is displaced and a same-named blob collides. The boot impl is
