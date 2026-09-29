@@ -11,7 +11,7 @@
 
   DELIBERATELY NOT carried (each with a reason, so nobody re-adds them):
   - config_pri_auto_brightness_* / config_pri_hbm_* (18 arrays): MTK-framework
-    names with no AOSP equivalent -- an overlay entry for an unknown resource
+    names with no AOSP equivalent - an overlay entry for an unknown resource
     fails the build. The AOSP auto-brightness pair below covers the framework.
   - rounded corners: stock sets none (no corner config in either RRO), so the
     AOSP default applies. Do not invent a radius.
@@ -26,7 +26,7 @@
 -->
 <resources>
     <!-- Biometric sensors. AOSP ships this EMPTY with the answer in a
-         comment -- every device declares its own, or Settings hides
+         comment - every device declares its own, or Settings hides
          enrolment and dumpsys reports the wrong modality (RS4: modality 8
          FACE with no fingerprint sensor at all). Stock: exactly one
          fingerprint sensor, no face ("0:2:15"). Matches the Goodix GF3976. -->
@@ -39,7 +39,7 @@
     <string name="config_mainBuiltInDisplayCutoutRectApproximation" translatable="false">m-40,0l80,0l0,106l-80,0l0,-106z</string>
     <bool name="config_fillMainBuiltInDisplayCutout">true</bool>
 
-    <!-- Refresh rates. [C] -- see header. -->
+    <!-- Refresh rates. [C] - see header. -->
     <integer name="config_defaultPeakRefreshRate">120</integer>
     <integer name="config_defaultRefreshRate">0</integer>
 
