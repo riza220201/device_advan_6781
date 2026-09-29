@@ -30,9 +30,8 @@
 /vendor/lib(64)?/android\.hardware\.graphics\.common-V6-ndk\.so                 u:object_r:same_process_hal_file:s0
 /vendor/lib(64)?/vendor\.mediatek\.hardware\.graphics-V1-ndk\.so                u:object_r:same_process_hal_file:s0
 
-# remosaic daemon binary. Without an exec type init refuses the service
-# under enforcing ("no domain transition"). Stock label, taken as-is.
-/(vendor|system/vendor)/bin/remosaic_daemon                                          u:object_r:remosaic_daemon_exec:s0
+# (remosaic_daemon's exec label: sepolicy_vndr bsp/non_plat/file_contexts,
+# byte-identical to stock's -- duplicating it here is a build error.)
 
 # Goodix fingerprint template/calibration store. Stock declares
 # goodix_data_file with HAL allows but labels NO path with it (measured:

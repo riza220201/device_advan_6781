@@ -4,21 +4,27 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 # remosaic daemon (camera full-res path): a vndbinder daemon publishing
-# android.IRemosaicDaemon, consumed by mtk_hal_camera. All rules measured
-# from Advan stock's vendor_sepolicy.cil 2026-09-19. The domain, exec type
-# and service type are declared here because sepolicy_vndr does not declare
-# them (duplicate fails loudly at build if that changes).
+# android.IRemosaicDaemon, consumed by mtk_hal_camera. Rules measured from
+# Advan stock's vendor_sepolicy.cil 2026-09-19.
 #
-# A vendor init service needs an exec type or init refuses it under
-# enforcing ("no domain transition from u:r:init:s0") -- the exec label is
-# in file_contexts, the entrypoint rule is below.
+# The TYPES and LABELS come from device/mediatek/sepolicy_vndr, not from
+# here: remosaic_daemon (basic/non_plat), remosaic_daemon_exec +
+# init_daemon_domain + vndbinder_use (bsp/non_plat), remosaic_daemon_service
+# as a vndservice_manager_type (bsp/non_plat/vndservice.te), the exec label
+# (bsp/non_plat/file_contexts) and android.IRemosaicDaemon
+# (bsp/non_plat/vndservice_contexts). An earlier revision of this file
+# declared all three types itself, claiming sepolicy_vndr did not -- it does,
+# and checkpolicy stopped build ab on it ("Duplicate declaration of type
+# remosaic_daemon"). That revision also typed the service as
+# service_manager_type, the wrong manager for a vndservice.
+#
+# What stays here is only what sepolicy_vndr's remosaic files lack and stock
+# grants (duplicate allow rules are legal, so overlap is harmless).
+#
+# Inert on this build either way: stock ships no remosaic_daemon binary and
+# no init rc for it (JOURNAL 2026-09-19); the tester gate is `vndservice
+# list`, not the policy.
 
-type remosaic_daemon, domain;
-type remosaic_daemon_exec, exec_type, vendor_file_type, file_type;
-type remosaic_daemon_service, service_manager_type;
-
-init_daemon_domain(remosaic_daemon)
-vndbinder_use(remosaic_daemon)
 allow remosaic_daemon remosaic_daemon_exec:file { read getattr map execute open entrypoint };
 allow remosaic_daemon remosaic_daemon_service:service_manager add;
 allow remosaic_daemon mtk_hal_camera:binder transfer;
