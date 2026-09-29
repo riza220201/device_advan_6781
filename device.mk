@@ -680,16 +680,27 @@ PRODUCT_SOONG_NAMESPACES += \
 $(call inherit-product, vendor/advan/6781/6781-vendor.mk)
 
 # ---------------------------------------------------------------------------
-# ro.6781.build.stamp -- what PackageManager compares to decide "is this an update?"
+# ro.rs4.build.stamp (from ADVAN_BUILD_STAMP) -- what PackageManager compares to
+# decide "is this an update?"
 #
 # This ROM pins ro.build.version.incremental to the stock identity
 # (1741067669) on purpose, so banking/integrity checks see an honest
 # device. AOSP's upgrade test is exactly that string, so mIsUpgrade is
 # permanently false and everything gated on it is dead. The fix patches
 # what PackageManager COMPARES, never what the device REPORTS (RS4
-# mechanism): the release script exports ADVAN_BUILD_STAMP once per
-# release so every artifact carries the same stamp; guarded so plain `m`
-# builds emit nothing and behave exactly as stock.
+# mechanism): a release flow exports ADVAN_BUILD_STAMP once per release so
+# every artifact carries the same stamp; guarded so plain `m` builds emit
+# nothing and behave exactly as stock. (No Advan release flow exists yet --
+# the S666LN's is crdroid-build-rc.sh + sign-release.sh; while BUILD_NUMBER
+# is not pinned the incremental changes per build and this is moot.)
+#
+# The PROPERTY NAME is not ours to choose: the shared crDroid tree's
+# PackageManagerService (the S666LN recipe's frameworks patch, :1453) reads
+# SystemProperties.get("ro.rs4.build.stamp", Build.VERSION.INCREMENTAL) --
+# hard-coded. An earlier revision emitted ro.6781.build.stamp, which nothing
+# reads, so the fix would have been silently dead the moment a release pinned
+# BUILD_NUMBER (found 2026-09-29 reading the recipe). The "rs4" in the name is
+# that patch's contract, not a claim about this device.
 ifneq ($(ADVAN_BUILD_STAMP),)
-PRODUCT_SYSTEM_PROPERTIES += ro.6781.build.stamp=$(ADVAN_BUILD_STAMP)
+PRODUCT_SYSTEM_PROPERTIES += ro.rs4.build.stamp=$(ADVAN_BUILD_STAMP)
 endif
